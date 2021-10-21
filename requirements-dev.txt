@@ -26,10 +26,14 @@ flake8==4.0.1
     # via -r requirements-dev.in
 identify==2.3.0
     # via pre-commit
+idna==3.3
+    # via yarl
 iniconfig==1.1.1
     # via pytest
 mccabe==0.6.1
     # via flake8
+multidict==5.2.0
+    # via yarl
 mypy==0.910
     # via -r requirements-dev.in
 mypy-extensions==0.4.3
@@ -67,12 +71,15 @@ pyparsing==2.4.7
 pytest==6.2.5
     # via -r requirements-dev.in
 pyyaml==6.0
-    # via pre-commit
+    # via
+    #   pre-commit
+    #   vcrpy
 regex==2021.10.21
     # via black
 six==1.16.0
     # via
     #   tox
+    #   vcrpy
     #   virtualenv
 toml==0.10.2
     # via
@@ -88,7 +95,13 @@ typing-extensions==3.10.0.2
     # via
     #   black
     #   mypy
+vcrpy==4.1.1
+    # via -r requirements-dev.in
 virtualenv==20.8.1
     # via
     #   pre-commit
     #   tox
+wrapt==1.13.2
+    # via vcrpy
+yarl==1.7.0
+    # via vcrpy
