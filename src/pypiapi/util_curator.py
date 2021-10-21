@@ -36,10 +36,10 @@ def curator(
         raise TypeError("Expected Dataclass")
 
     return_dict = dict_in.copy()
-    # List all attributes of dataclass
+    # List all attributes of dataclass that do not have a default value
     names = [f.name for f in fields(dataclass) if f.default is MISSING]
-    # Track which have defaults, do not delete
-    defaults = [f.name for f in fields(dataclass) if f.default is not MISSING]
+    # Track attributes which have defaults, do not delete these
+    keep_names = [f.name for f in fields(dataclass) if f.default is not MISSING]
 
     if add_missing:
         update = {name: default_value for name in names if name not in dict_in.keys()}
@@ -48,7 +48,7 @@ def curator(
 
     if remove_extra:
         for key in dict_in.keys():
-            if key not in defaults and key not in names:
+            if key not in keep_names and key not in names:
                 log.info("Removing unused key: `%s`", key)
                 return_dict.pop(key)
 
