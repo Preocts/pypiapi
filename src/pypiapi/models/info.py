@@ -1,27 +1,27 @@
-from dataclasses import dataclass
+import dataclasses
 from typing import List
 from typing import Optional
 
 
-@dataclass
+@dataclasses.dataclass
 class ProjectUrls:
     Download: Optional[str] = ""
     Homepage: Optional[str] = ""
 
 
-@dataclass
+@dataclasses.dataclass
 class Downloads:
     last_day: int = -1
     last_month: int = -1
     last_week: int = -1
 
 
-@dataclass
+@dataclasses.dataclass
 class Info:
     author: str = ""
     author_email: str = ""
     bugtrack_url: str = ""
-    classifiers: Optional[List[str]] = None
+    classifiers: List[str] = dataclasses.field(default_factory=list)
     description: str = ""
     description_content_type: Optional[str] = None
     docs_url: Optional[str] = None

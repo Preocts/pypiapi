@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+import dataclasses
 from typing import Any
 from typing import Dict
 from typing import List
@@ -8,9 +8,10 @@ from pypiapi.models.info import Info
 from pypiapi.models.info import ProjectUrls
 from pypiapi.models.release import Digests
 from pypiapi.models.release import Release
+from pypiapi.util_curator import curator
 
 
-@dataclass
+@dataclasses.dataclass
 class Project:
     info: Info
     last_serial: int
@@ -27,12 +28,12 @@ class Project:
         data["urls"] = Project._build_urls(data["urls"])
         data["releases"] = Project._build_release(data["releases"])
 
-        return cls(**data)
+        return cls(**curator(cls, data))
 
     @staticmethod
-    def _build_urls(data: Dict[str, Any]) -> List[Release]:
+    def _build_urls(data: List[Dict[str, Any]]) -> List[Release]:
         """Build subclass of urls"""
-        return [Release(**url) for url in data]
+        return [Release(**curator(Release, url)) for url in data]
 
     @staticmethod
     def _build_release(data: Dict[str, Any]) -> Dict[str, List[Release]]:
@@ -42,13 +43,13 @@ class Project:
             # Assemble sub-class Digests
             releases[key] = []
             for rdata in value:
-                rdata["digests"] = Digests(**rdata["digests"])
-                releases[key].append(Release(**rdata))
+                rdata["digests"] = Digests(**curator(Digests, rdata["digests"]))
+                releases[key].append(Release(**curator(Release, rdata)))
         return releases
 
     @staticmethod
     def _build_info(data: Dict[str, Any]) -> Info:
         """Build subclass of info"""
-        data["downloads"] = Downloads(**data["downloads"])
-        data["project_urls"] = ProjectUrls(**data["project_urls"])
-        return Info(**data)
+        data["downloads"] = Downloads(**curator(Downloads, data["downloads"]))
+        data["project_urls"] = ProjectUrls(**curator(ProjectUrls, data["project_urls"]))
+        return Info(**curator(Info, data))
