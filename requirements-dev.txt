@@ -68,7 +68,7 @@ pytest==6.2.5
     # via -r requirements-dev.in
 pyyaml==6.0
     # via pre-commit
-regex==2021.10.8
+regex==2021.10.21
     # via black
 six==1.16.0
     # via
