@@ -19,10 +19,7 @@ class PyPIClient:
         """Return, if found, the most recent project version metadata"""
         url = f"https://pypi.org/pypi/{project_name}/json"
         response = self.http.request("GET", url)
-        result = self._jsonify(response.data)
-        if "error" in result:
-            self.log.error("Error: %s", result)
-        return Project.from_dict(result) if "error" not in result else None
+        return self._process_result(response)
 
     def get_project_by_version(
         self,
@@ -32,6 +29,10 @@ class PyPIClient:
         """Return, if found, the most recent project version metadata"""
         url = f"https://pypi.org/pypi/{project_name}/{version}/json"
         response = self.http.request("GET", url)
+        return self._process_result(response)
+
+    def _process_result(self, response: Any) -> Optional[Project]:
+        """Internal: Handle responses"""
         result = self._jsonify(response.data)
         if "error" in result:
             self.log.error("Error: %s", result)
