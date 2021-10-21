@@ -26,7 +26,7 @@ class PyPIClient:
         project_name: str,
         version: str,
     ) -> Optional[Project]:
-        """Return, if found, the most recent project version metadata"""
+        """Return, if found, the provided project version metadata"""
         url = f"https://pypi.org/pypi/{project_name}/{version}/json"
         response = self.http.request("GET", url)
         return self._process_result(response)

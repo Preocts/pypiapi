@@ -40,7 +40,6 @@ class Project:
         """Build subclass of releases"""
         releases: Dict[str, List[Release]] = {}
         for key, value in data.items():
-            # Assemble sub-class Digests
             releases[key] = []
             for rdata in value:
                 rdata["digests"] = Digests(**curator(Digests, rdata["digests"]))
