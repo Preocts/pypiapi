@@ -47,9 +47,8 @@ def curator(
         return_dict.update(update)
 
     if remove_extra:
-        remove = [key for key in dict_in.keys() if key not in names]
-        for key in remove:
-            if key not in defaults:
+        for key in dict_in.keys():
+            if key not in defaults and key not in names:
                 log.info("Removing unused key: `%s`", key)
                 return_dict.pop(key)
 
