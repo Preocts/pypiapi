@@ -1,0 +1,174 @@
+interactions:
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: https://pypi.org/pypi/%20invalid%20name/json
+  response:
+    body:
+      string: '301 Moved Permanently
+
+
+        The resource has been moved to /pypi/%20invalid%20name/json/; you should be
+        redirected automatically.
+
+
+        '
+    headers:
+      Accept-Ranges:
+      - bytes
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '126'
+      Content-Security-Policy:
+      - base-uri 'self'; block-all-mixed-content; connect-src 'self' https://api.github.com/repos/
+        *.fastly-insights.com sentry.io https://api.pwnedpasswords.com https://2p66nmmycsj3.statuspage.io;
+        default-src 'none'; font-src 'self' fonts.gstatic.com; form-action 'self';
+        frame-ancestors 'none'; frame-src 'none'; img-src 'self' https://warehouse-camo.ingress.cmh1.psfhosted.org/
+        www.google-analytics.com *.fastly-insights.com; script-src 'self' www.googletagmanager.com
+        www.google-analytics.com *.fastly-insights.com https://cdn.ravenjs.com; style-src
+        'self' fonts.googleapis.com; worker-src *.fastly-insights.com
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Thu, 21 Oct 2021 02:06:46 GMT
+      Location:
+      - https://pypi.org/pypi/%20invalid%20name/json/
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - nginx/1.13.9
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept-Encoding
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Served-By:
+      - cache-bwi5154-BWI, cache-mdw17323-MDW
+      X-Timer:
+      - S1634782006.993097,VS0,VE54
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 301
+      message: Moved Permanently
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: https://pypi.org/pypi/%20invalid%20name/json/
+  response:
+    body:
+      string: "\n\n\n\n\n\n<!DOCTYPE html>\n<html lang=\"en\" dir=\"ltr\">\n  <head>\n
+        \   <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n
+        \   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n
+        \   <meta name=\"defaultLanguage\" content=\"en\">\n    <meta name=\"availableLanguages\"
+        content=\"en, es, fr, ja, pt_BR, uk, el, de, zh_Hans, zh_Hant, ru, he, eo\">\n\n
+        \   \n\n    <title>Page Not Found (404) \xB7 PyPI</title>\n    <meta name=\"description\"
+        content=\"The Python Package Index (PyPI) is a repository of software for
+        the Python programming language.\">\n\n    <link rel=\"stylesheet\" href=\"/static/css/warehouse-ltr.a01c0808.css\">\n
+        \   <link rel=\"stylesheet\" href=\"/static/css/fontawesome.6002a161.css\">\n
+        \   <link rel=\"stylesheet\" href=\"/static/css/regular.98fbf39a.css\">\n
+        \   <link rel=\"stylesheet\" href=\"/static/css/solid.c3b5f0b5.css\">\n    <link
+        rel=\"stylesheet\" href=\"/static/css/brands.2c303be1.css\">\n    <link rel=\"stylesheet\"
+        href=\"https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600,600italic,700,700italic%7CSource+Code+Pro:500\">\n
+        \   <noscript>\n      <link rel=\"stylesheet\" href=\"/static/css/noscript.d4ce1e76.css\">\n
+        \   </noscript>\n\n    \n  <link href=\"https://fonts.googleapis.com/css?family=Ewert\"
+        rel=\"stylesheet\">\n\n\n    <link rel=\"icon\" href=\"/static/images/favicon.6a76275d.ico\"
+        type=\"image/x-icon\">\n\n    <link rel=\"alternate\" type=\"application/rss+xml\"
+        title=\"RSS: 40 latest updates\" href=\"/rss/updates.xml\">\n    <link rel=\"alternate\"
+        type=\"application/rss+xml\" title=\"RSS: 40 newest packages\" href=\"/rss/packages.xml\">\n
+        \   \n    \n\n    <meta property=\"og:url\" content=\"https://pypi.org/pypi/%20invalid%20name/json/\">\n
+        \   <meta property=\"og:site_name\" content=\"PyPI\">\n    <meta property=\"og:type\"
+        content=\"website\">\n    <meta property=\"og:image\" content=\"https://pypi.org/static/images/twitter.6fecba6f.jpg\">\n
+        \   <meta property=\"og:title\" content=\"Page Not Found (404)\">\n    <meta
+        property=\"og:description\" content=\"The Python Package Index (PyPI) is a
+        repository of software for the Python programming language.\">\n\n    <link
+        rel=\"search\" type=\"application/opensearchdescription+xml\" title=\"PyPI\"
+        href=\"/opensearch.xml\">\n\n    \n    <script\n      src=\"https://cdn.ravenjs.com/3.26.2/raven.min.js\"\n
+        \     integrity=\"sha384-D6LXy67EIC102DTuqypxwQsTHgiatlbvg7q/1YAWFb6lRyZ1lIZ6bGDsX7jxHNKA\"\n
+        \     crossorigin=\"anonymous\">\n    </script>\n    \n    <script async\n
+        \           data-ga-id=\"UA-55961911-1\"\n            data-sentry-frontend-dsn=\"https://3a67b35c9dc248a191d761410b095861@sentry.io/1231155\"\n
+        \           src=\"/static/js/warehouse.78da1885.js\">\n    </script>\n    \n
+        \   \n    <script async src=\"https://www.googletagmanager.com/gtag/js?id=UA-55961911-1\"></script>\n
+        \   <script defer src=\"https://www.fastly-insights.com/insights.js?k=6a52360a-f306-421e-8ed5-7417d0d4a4e9&dnt=true\"></script>\n
+        \ </head>\n\n  <body data-controller=\"viewport-toggle\">\n    \n<div class=\"viewport-section
+        viewport-section--dark\">\n  <div class=\"viewport-section__content\">\n    <a
+        href=\"/\">\n      <img alt=\"PyPI\" src=\"/static/images/logo-small.95de8436.svg\">\n
+        \   </a>\n    <h1 class=\"viewport-section__heading\">We looked everywhere
+        but couldn't find this page</h1>\n\n    \n<form class=\"search-form search-form--large
+        search-form--fullwidth\" action=\"/search/\" role=\"search\">\n  <label for=\"search\"
+        class=\"sr-only\">Search PyPI</label>\n  <input id=\"search\" class=\"search-form__search
+        large-input\" type=\"text\" name=\"q\" placeholder=\"Search projects\" autocomplete=\"off\"
+        spellcheck=\"false\" autocapitalize=\"off\">\n  <button type=\"submit\" class=\"search-form__button\">\n
+        \   <i class=\"fa fa-search\" aria-hidden=\"true\"></i>\n    <span class=\"sr-only\">Search</span>\n
+        \ </button>\n</form>\n\n\n    \n    <div class=\"viewport-section__text\">\n
+        \     <p>\n        <strong>Error code 404</strong>\n        <br>\n        <a
+        href=\"/\">Back to the homepage</a>\n      </p>\n    </div>\n    \n  </div>\n</div>\n\n
+        \ <div class=\"viewport-section viewport-section--ee\">\n    <div class=\"viewport-section__content\">\n
+        \     <h2 class=\"viewport-section__heading\">And now for something <br><span>completely
+        different</span></h2>\n      <div class=\"viewport-section__video\">\n        <div
+        class=\"viewport-section__video-container\">\n          <iframe title=\"Monty
+        Python - The Cheese Shop Sketch\" width=\"560\" height=\"315\" src=\"https://www.youtube-nocookie.com/embed/zB8pbUW5n1g?rel=0&enablejsapi=1&showinfo=0&iv_load_policy=3&origin=https://pypi.org\"
+        frameborder=\"0\" allowfullscreen></iframe>\n        </div>\n        <p><a
+        href=\"http://www.montypython.net/scripts/cheese.php\" title=\"External link\"
+        target=\"_blank\" rel=\"noopener\">View video transcript</a></p>\n      </div>\n
+        \   </div>\n  </div>\n\n\n  </body>\n\n</html>"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4659'
+      Content-Security-Policy:
+      - base-uri 'self'; block-all-mixed-content; connect-src 'self' https://api.github.com/repos/
+        *.fastly-insights.com sentry.io https://api.pwnedpasswords.com https://2p66nmmycsj3.statuspage.io;
+        default-src 'none'; font-src 'self' fonts.gstatic.com; form-action 'self';
+        frame-ancestors 'none'; frame-src 'none' https://www.youtube-nocookie.com;
+        img-src 'self' https://warehouse-camo.ingress.cmh1.psfhosted.org/ www.google-analytics.com
+        *.fastly-insights.com; script-src 'self' www.googletagmanager.com www.google-analytics.com
+        *.fastly-insights.com https://cdn.ravenjs.com https://www.youtube.com https://s.ytimg.com;
+        style-src 'self' fonts.googleapis.com; worker-src *.fastly-insights.com
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Thu, 21 Oct 2021 02:06:46 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - nginx/1.13.9
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept-Encoding, Accept-Encoding
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Served-By:
+      - cache-bwi5136-BWI, cache-mdw17323-MDW
+      X-Timer:
+      - S1634782006.075467,VS0,VE56
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+version: 1

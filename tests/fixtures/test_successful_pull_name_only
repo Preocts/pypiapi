@@ -1,0 +1,164 @@
+interactions:
+  - request:
+      body: null
+      headers: {}
+      method: GET
+      uri: https://pypi.org/pypi/secretbox/json
+    response:
+      body:
+        string:
+          '{"info":{"author":"Preocts","author_email":"preocts@preocts.com","bugtrack_url":null,"classifiers":["License
+          :: OSI Approved :: MIT License","Programming Language :: Python :: 3","Programming
+          Language :: Python :: 3 :: Only","Programming Language :: Python :: 3.6","Programming
+          Language :: Python :: 3.7","Programming Language :: Python :: 3.8","Programming
+          Language :: Python :: 3.9","Programming Language :: Python :: 3.10","Programming
+          Language :: Python :: Implementation :: CPython"],"description":"# secretbox\n\n[![Code
+          style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)\n[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)\n[![pre-commit.ci
+          status](https://results.pre-commit.ci/badge/github/Preocts/python-template/main.svg)](https://results.pre-commit.ci/latest/github/Preocts/python-template/main)\n[![Python
+          Tests](https://github.com/Preocts/secretbox/actions/workflows/python-tests.yml/badge.svg)](https://github.com/Preocts/secretbox/actions/workflows/python-tests.yml)\n[![codecov](https://codecov.io/gh/Preocts/secretbox/branch/main/graph/badge.svg?token=7QFJGMD3JI)](https://codecov.io/gh/Preocts/secretbox)\n\nA
+          library that offers a simple method of loading and accessing environmental
+          variables, `.env` file values, and other sources of secrets. The class stores
+          values to state when load methods are called.\n\nLoaded values are also injected
+          into the local environ. This is to assist with adjacent libraries that reference
+          `os.environ` values by default. Required values can be kept in a `.env` file
+          instead of managing a script to load them into the environment.\n\n---\n\n###
+          Requirements\n- Python >=3.6\n\n### Optional Dependencies\n- boto3\n- boto3-stubs[secretsmanager]\n\n---\n\n##
+          Install\n\n```bash\n$ pip install secretbox\n```\n\n*Optional AWS Secret Manager
+          support*\n```bash\n$ pip install secretbox[aws]\n```\n\n---\n\n## Example
+          use with `auto_load=True`\n\nThis loads the system environ and the `.env`
+          from the current working directory into the class state for quick reference.\n\n```python\nfrom
+          secretbox import SecretBox\n\nsecrets = SecretBox(auto_load=True)\n\n\ndef
+          main() -> int:\n    \"\"\"Main function\"\"\"\n    my_sevice_password = secrets.get(\"SERVICE_PW\")\n    #
+          More code\n    return 0\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n```\n\n##
+          Example use with `load_from()`\n\nThis loads our system environ, our AWS secret
+          store, and then a specific `.env` file if it exists (replacing any values
+          from the prior to loads)\n\nNotice we can declare our parameters when creating
+          the `SecretBox` instance and when calling `load_from()`. All keywords will
+          be sent to the loaders with preference to the `load_from()` values.\n\n```python\nfrom
+          secretbox import SecretBox\n\nsecrets = SecretBox(filename=\"sandbox/.override_env\")\n\n\ndef
+          main() -> int:\n    \"\"\"Main function\"\"\"\n    secrets.load_from(\n        loaders=[\"environ\",
+          \"awssecret\", \"envfile\"],\n        aws_sstore_name=\"mySecrets\",\n        aws_region_name=\"us-east-1\",\n    )\n    my_sevice_password
+          = secrets.get(\"SERVICE_PW\")\n    # More code\n    return 0\n\n\nif __name__
+          == \"__main__\":\n    raise SystemExit(main())\n```\n\n---\n\n## SecretBox
+          arguments:\n\n`SecretBox(auto_load: bool = False, load_debug: bool = False,
+          **kwargs: Any)`\n\n**auto_load**\n- Loads environment variables and then the
+          .env file from current working directory if found.\n\n**load_debug**\n- When
+          true, internal logger level is set to DEBUG. Secret values are truncated,
+          however it is not recommended to leave this on for production deployments.\n\n**kwargs**\n-
+          All keyword arguments will be passed to loaders when called. These can also
+          be given to the `load_from()` method as detailed below.\n\n## SecretBox API:\n\n**.get(key:
+          str, default: str = \"\") -> str**\n- Returns the string value of the loaded
+          value by key name. If the key does not exist, an empty string will be returned
+          `\"\"` or the provided optional default value.\n- Note: This method pulls
+          from the instance''s state and does not reflect changes to the environment
+          before/after loading.\n\n**.load_from(loaders: list[str], \\*\\*kwargs: Any)
+          -> None**\n- Runs load_values from each of the listed loadered in the order
+          they appear\n- Loader options:\n  - **environ**\n    - Loads the current environmental
+          variables into secretbox.\n  - **envfile**\n    - Loads .env file. Optional
+          `filename` kwarg can override the default load of the current working directory
+          `.env` file.\n  - **awssecret**\n    - Loads secrets from an AWS secret manager.
+          Requires `aws_sstore_name` and `aws_region_name` keywords to be provided or
+          for those values to be in the environment variables under `AWS_SSTORE_NAME`
+          and `AWS_REGION_NAME`. `aws_sstore_name` is the name of the store, not the
+          arn.\n- **kwargs**\n  - All keyword arguments are passed into the loaders
+          when they are called. Each loader details which extra keyword arguments it
+          uses or requires above.\n\n---\n\n## `.env` file format\n\nCurrent format
+          for the `.env` file supports strings only and is parsed in the following order:\n-
+          Each seperate line is considered a new possible key/value set\n- Each set
+          is delimted by the first `=` found\n- Leading and trailing whitespace are
+          removed\n- Matched leading/trailing single quotes or double quotes will be
+          stripped from values (not keys).\n\nI''m open to suggestions on standards
+          to follow here.\n\nThis `.env` example:\n```conf\n# Comments are ignored\n\nKEY=value\n\nInvalid
+          lines without the equal sign delimiter will also be ignored\n```\n\nWill be
+          parsed as:\n```python\n{\"KEY\": \"value\"}\n```\n\nThis `.env` example:\n```conf\nPASSWORD
+          = correct horse battery staple\nUSER_NAME=\"not_admin\"\n\nMESSAGE = ''    Totally
+          not an \"admin\" account logging in''\n```\n\nWill be parsed as:\n```python\n{\n    \"PASSWORD\":
+          \"correct horse battery staple\",\n    \"USER_NAME\": \"not_admin\",\n    \"MESSAGE\":
+          ''    Toally not an \"admin\" account logging in'',\n}\n```\n\n---\n\n## Local
+          developer installation\n\nIt is **highly** recommended to use a `venv` for
+          installation. Leveraging a `venv` will ensure the installed dependency files
+          will not impact other python projects.\n\nClone this repo and enter root directory
+          of repo:\n```bash\n$ git clone https://github.com/Preocts/secretbox\n$ cd
+          secretbox\n```\n\nCreate and activate `venv`:\n```bash\n# Linux/MacOS\npython3
+          -m venv venv\n. venv/bin/activate\n\n# Windows\npython -m venv venv\nvenv\\Scripts\\activate.bat\n#
+          or\npy -m venv venv\nvenv\\Scripts\\activate.bat\n```\n\nYour command prompt
+          should now have a `(venv)` prefix on it.\n\nInstall editable library and development
+          requirements:\n```bash\n# Linux/MacOS\npip install -r requirements-dev.txt\npip
+          install --editable .[aws,tests]\n\n# Windows\npython -m pip install -r requirements-dev.txt\npython
+          -m pip install --editable .[aws,test]\n# or\npy -m pip install -r requirements-dev.txt\npy
+          -m pip install --editable .[aws,test]\n```\n\nInstall pre-commit hooks to
+          local repo:\n```bash\npre-commit install\npre-commit autoupdate\n```\n\nRun
+          tests\n```bash\ntox\n```\n\nTo exit the `venv`:\n```bash\ndeactivate\n```\n\n---\n\n###
+          Makefile\n\nThis repo has a Makefile with some quality of life scripts if
+          your system supports `make`.\n\n- `install` : Clean all artifacts, update
+          pip, install requirements with no updates\n- `update` : Clean all artifacts,
+          update pip, update requirements, install everything\n- `clean-pyc` : Deletes
+          python/mypy artifacts\n- `clean-tests` : Deletes tox, coverage, and pytest
+          artifacts\n- `build-dist` : Build source distribution and wheel distribution\n\n\n","description_content_type":"text/markdown","docs_url":null,"download_url":"","downloads":{"last_day":-1,"last_month":-1,"last_week":-1},"home_page":"https://github.com/preocts/secretbox","keywords":"","license":"MIT","maintainer":"","maintainer_email":"","name":"secretbox","package_url":"https://pypi.org/project/secretbox/","platform":"","project_url":"https://pypi.org/project/secretbox/","project_urls":{"Homepage":"https://github.com/preocts/secretbox"},"release_url":"https://pypi.org/project/secretbox/2.0.1/","requires_dist":["boto3
+          (>=1.18.56) ; extra == ''aws''","boto3-stubs[secretsmanager] (>=1.18.55) ;
+          extra == ''aws''","moto[secretsmanager] (>=2.2.8) ; extra == ''tests''"],"requires_python":">=3.6","summary":"A
+          library that offers a simple method of loading and accessing environmental
+          variables and `.env` file values.","version":"2.0.1","yanked":false,"yanked_reason":null},"last_serial":11748176,"releases":{"1.0.0":[{"comment_text":"","digests":{"md5":"fe48f9a8f49233ce3a764b1bd459d7b9","sha256":"252755367b603556ca03730869ec8b8d7ec680f5a7c0a8e3f020d2742b644d6c"},"downloads":-1,"filename":"secretbox-1.0.0-py3-none-any.whl","has_sig":false,"md5_digest":"fe48f9a8f49233ce3a764b1bd459d7b9","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":5692,"upload_time":"2021-05-30T01:41:00","upload_time_iso_8601":"2021-05-30T01:41:00.661757Z","url":"https://files.pythonhosted.org/packages/1b/77/b54108991f63e7e2da6bdf4fd97075040e928244b70be5630a96d250ea3a/secretbox-1.0.0-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"2b1abf800cc63537f92a21ef1d6780bf","sha256":"73ff079de0c5795e8db2b388d04d3b161aa835c01c6d3149cfd969baace4d93d"},"downloads":-1,"filename":"secretbox-1.0.0.tar.gz","has_sig":false,"md5_digest":"2b1abf800cc63537f92a21ef1d6780bf","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":5657,"upload_time":"2021-05-30T01:41:02","upload_time_iso_8601":"2021-05-30T01:41:02.232861Z","url":"https://files.pythonhosted.org/packages/19/ca/8e703964b1405682b17c3508b58ac179d60b4eccbee118d79179c1067d03/secretbox-1.0.0.tar.gz","yanked":false,"yanked_reason":null}],"1.0.1":[{"comment_text":"","digests":{"md5":"3b48478a3680adf799072a1fe291b963","sha256":"a9a06445df81eb83ba6bc156ffde81539fc064f172d03167dc30e828c29cd163"},"downloads":-1,"filename":"secretbox-1.0.1-py3-none-any.whl","has_sig":false,"md5_digest":"3b48478a3680adf799072a1fe291b963","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":5721,"upload_time":"2021-05-30T02:29:45","upload_time_iso_8601":"2021-05-30T02:29:45.057875Z","url":"https://files.pythonhosted.org/packages/29/19/9a6437c05a4f786a03959209db324dfe8980f27ef43f403a632744fc54a6/secretbox-1.0.1-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"eae32a2a9ff11ef46cd98d495b69dd54","sha256":"25ca555fe00edfee2792d2135fa9d8ad67dfca3b9dad52406e39d913354a06ce"},"downloads":-1,"filename":"secretbox-1.0.1.tar.gz","has_sig":false,"md5_digest":"eae32a2a9ff11ef46cd98d495b69dd54","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":5649,"upload_time":"2021-05-30T02:29:46","upload_time_iso_8601":"2021-05-30T02:29:46.426786Z","url":"https://files.pythonhosted.org/packages/dc/71/16fd643843efe557bbaee46eeeff2b0f3a504fa67cf16ea4c0b8b353cfb7/secretbox-1.0.1.tar.gz","yanked":false,"yanked_reason":null}],"1.0.2":[{"comment_text":"","digests":{"md5":"74133d48f2737291ae40b9728ab78bf9","sha256":"3cf268827f5f215a9c46e6c16576291ed85f4400bf28ff058a7c47803c85dfbd"},"downloads":-1,"filename":"secretbox-1.0.2-py3-none-any.whl","has_sig":false,"md5_digest":"74133d48f2737291ae40b9728ab78bf9","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":5730,"upload_time":"2021-05-30T02:36:31","upload_time_iso_8601":"2021-05-30T02:36:31.190170Z","url":"https://files.pythonhosted.org/packages/db/a3/4d01c8ef515cb3bac2c880920a2f76b71cc6c06133b545b3b5a8c3fb5f8d/secretbox-1.0.2-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"eb602ba3ca8cc0a326fdc44191d4a7db","sha256":"614d4f9f2bbbee1c07d186686257610c9d14e195297448156513e3ecf4c9bbe6"},"downloads":-1,"filename":"secretbox-1.0.2.tar.gz","has_sig":false,"md5_digest":"eb602ba3ca8cc0a326fdc44191d4a7db","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":5689,"upload_time":"2021-05-30T02:36:32","upload_time_iso_8601":"2021-05-30T02:36:32.535322Z","url":"https://files.pythonhosted.org/packages/92/98/43b08aef1b282d04db4afc504f0fd51964964dcc3b7e8fa92711125f50f8/secretbox-1.0.2.tar.gz","yanked":false,"yanked_reason":null}],"1.1.0":[{"comment_text":"","digests":{"md5":"1c738bfed54f5a859574550b7a034cb3","sha256":"71123f91f9ea852deb5006d93bd905eb4fc9b5b0094be58549dffe469713c214"},"downloads":-1,"filename":"secretbox-1.1.0-py3-none-any.whl","has_sig":false,"md5_digest":"1c738bfed54f5a859574550b7a034cb3","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":6347,"upload_time":"2021-05-30T18:04:05","upload_time_iso_8601":"2021-05-30T18:04:05.242913Z","url":"https://files.pythonhosted.org/packages/63/73/0dde9705ecacf4b7fc82651848423cd56d95d23911fb6353e07f3bd71186/secretbox-1.1.0-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"026a1106be93abd407056a8354dc0759","sha256":"01c73f569f5650b49abbbb6bc7a7aeff33d3d3d64758155b67d13832081bf16a"},"downloads":-1,"filename":"secretbox-1.1.0.tar.gz","has_sig":false,"md5_digest":"026a1106be93abd407056a8354dc0759","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":6456,"upload_time":"2021-05-30T18:04:06","upload_time_iso_8601":"2021-05-30T18:04:06.538357Z","url":"https://files.pythonhosted.org/packages/6f/32/f0f5b2c2e6bdad88ca828af23e56dd327b90161a130e5aae66ad52c96a9d/secretbox-1.1.0.tar.gz","yanked":false,"yanked_reason":null}],"1.2.0":[{"comment_text":"","digests":{"md5":"4e75e6caf68696fbed53c4b0b1c7db61","sha256":"8318b43ba58f103e2debe59485f1744644a44545d2e35e87572e66a12df0d5b3"},"downloads":-1,"filename":"secretbox-1.2.0-py3-none-any.whl","has_sig":false,"md5_digest":"4e75e6caf68696fbed53c4b0b1c7db61","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":6662,"upload_time":"2021-07-03T18:41:35","upload_time_iso_8601":"2021-07-03T18:41:35.788858Z","url":"https://files.pythonhosted.org/packages/52/6c/56b03c46a7081cd87c6a4278acc1f4567f45173484a2f3a78a9d23763df6/secretbox-1.2.0-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"b5cd2aedd91c57a52637c3a91a723232","sha256":"e96fe2b70adcc157cedc18b6123dd6d8fe6ec9d714b40eb90cf67f5eca563fd9"},"downloads":-1,"filename":"secretbox-1.2.0.tar.gz","has_sig":false,"md5_digest":"b5cd2aedd91c57a52637c3a91a723232","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":6589,"upload_time":"2021-07-03T18:41:36","upload_time_iso_8601":"2021-07-03T18:41:36.900356Z","url":"https://files.pythonhosted.org/packages/b9/67/3927afba691b946e7fa554ac88072dfd2e3b9489c2ef932677cd775ba33d/secretbox-1.2.0.tar.gz","yanked":false,"yanked_reason":null}],"1.3.0":[{"comment_text":"","digests":{"md5":"321d29a5edfd5dde583fa5f933b9cbb6","sha256":"92d615091bda21633850cddef2b804a49e1c39139d0dd83d533761b7c6f02129"},"downloads":-1,"filename":"secretbox-1.3.0-py3-none-any.whl","has_sig":false,"md5_digest":"321d29a5edfd5dde583fa5f933b9cbb6","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":8689,"upload_time":"2021-07-24T05:21:03","upload_time_iso_8601":"2021-07-24T05:21:03.957114Z","url":"https://files.pythonhosted.org/packages/95/4f/e886df253cf089ce64174f3f6766795c264752724eecd4927f2c19e15f19/secretbox-1.3.0-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"676ba59bd332446f6aad1f1c1e6f7170","sha256":"61fffe434fb7a0da28cc91b022b0cee3e3bcc23075d41f62768147780decb204"},"downloads":-1,"filename":"secretbox-1.3.0.tar.gz","has_sig":false,"md5_digest":"676ba59bd332446f6aad1f1c1e6f7170","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":6621,"upload_time":"2021-07-24T05:21:05","upload_time_iso_8601":"2021-07-24T05:21:05.063295Z","url":"https://files.pythonhosted.org/packages/e7/8b/aef16cbfbdb6053da46af7c2385595810bae3e01387085b4860d73e98dd0/secretbox-1.3.0.tar.gz","yanked":false,"yanked_reason":null}],"1.3.1":[{"comment_text":"","digests":{"md5":"73333e7d6c8c1411c2a495ab8f2ee694","sha256":"ade6d71d4daa3a67b7c57d455f4cd40a6de946fcf4700d604b1bd119284c66cf"},"downloads":-1,"filename":"secretbox-1.3.1-py3-none-any.whl","has_sig":false,"md5_digest":"73333e7d6c8c1411c2a495ab8f2ee694","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":8689,"upload_time":"2021-07-24T05:23:48","upload_time_iso_8601":"2021-07-24T05:23:48.326048Z","url":"https://files.pythonhosted.org/packages/ce/e0/4edfb6eac78b885eb50e0052cd92eaccc45a930af3c4f23671cb35f60332/secretbox-1.3.1-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"89fa8471b1e2176840f864043ca2f3c3","sha256":"b5678c7407d77bc00d06dcff70c444e8d106525d78fbcb49050264691bd966e3"},"downloads":-1,"filename":"secretbox-1.3.1.tar.gz","has_sig":false,"md5_digest":"89fa8471b1e2176840f864043ca2f3c3","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":6625,"upload_time":"2021-07-24T05:23:49","upload_time_iso_8601":"2021-07-24T05:23:49.837815Z","url":"https://files.pythonhosted.org/packages/e8/59/bed09edf4ffea88aa989db6ee7868da417e14e1cbee4960a2a2eeb6f9bf5/secretbox-1.3.1.tar.gz","yanked":false,"yanked_reason":null}],"1.3.2":[{"comment_text":"","digests":{"md5":"b1e42897794655cec285e5db22aca02f","sha256":"40d5cf7d1d53fa210f35d73e3c9b29d5c0e058b221a643f4b1081552cead6002"},"downloads":-1,"filename":"secretbox-1.3.2-py3-none-any.whl","has_sig":false,"md5_digest":"b1e42897794655cec285e5db22aca02f","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":8733,"upload_time":"2021-07-25T18:50:15","upload_time_iso_8601":"2021-07-25T18:50:15.230981Z","url":"https://files.pythonhosted.org/packages/6c/f0/7250a69ee4091223326dce609011223ada476420d1c63967f72116ba2b28/secretbox-1.3.2-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"cc8c85113d3c4de67a1a9755df7efce8","sha256":"04172e11446a0988eee1defa4abbf9b9b037ecf3a3b5e162517970dbf829fc34"},"downloads":-1,"filename":"secretbox-1.3.2.tar.gz","has_sig":false,"md5_digest":"cc8c85113d3c4de67a1a9755df7efce8","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":6676,"upload_time":"2021-07-25T18:50:16","upload_time_iso_8601":"2021-07-25T18:50:16.735578Z","url":"https://files.pythonhosted.org/packages/9e/8e/2ebc19f70630f9d536a3555a43fab714c05543933d30c796b6f10692059f/secretbox-1.3.2.tar.gz","yanked":false,"yanked_reason":null}],"1.4.0":[{"comment_text":"","digests":{"md5":"33dcfbbe605eabe7deb7907cc47e313d","sha256":"2093c69516b1b360609ad526d285d8d177ab5904f2620982f307b3f5374cb7ff"},"downloads":-1,"filename":"secretbox-1.4.0-py3-none-any.whl","has_sig":false,"md5_digest":"33dcfbbe605eabe7deb7907cc47e313d","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":6906,"upload_time":"2021-07-31T04:23:54","upload_time_iso_8601":"2021-07-31T04:23:54.643358Z","url":"https://files.pythonhosted.org/packages/73/80/99c6c9041d14c959c0e41e624cee71249526cb78e6a1b90bbb1918e49431/secretbox-1.4.0-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"2d11d3a5f564135bf9af2cd33a2c07e7","sha256":"84ce11b6588aa4999cd24213b3cfa43dca551600dd53fb1e81ed0e4967d7a312"},"downloads":-1,"filename":"secretbox-1.4.0.tar.gz","has_sig":false,"md5_digest":"2d11d3a5f564135bf9af2cd33a2c07e7","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":6784,"upload_time":"2021-07-31T04:23:56","upload_time_iso_8601":"2021-07-31T04:23:56.535995Z","url":"https://files.pythonhosted.org/packages/53/d0/e0f7da18a679f30e2ee57731467d3ff33ff845997aa1af783eec53937edf/secretbox-1.4.0.tar.gz","yanked":false,"yanked_reason":null}],"1.5.0":[{"comment_text":"","digests":{"md5":"174cdb1ea79dc9e75eb4551a24485dd0","sha256":"47bbe03873573a3c7eaefda649dc1ccf6b6658c5b6a79ebf7826a82830c77450"},"downloads":-1,"filename":"secretbox-1.5.0-py3-none-any.whl","has_sig":false,"md5_digest":"174cdb1ea79dc9e75eb4551a24485dd0","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":7067,"upload_time":"2021-08-19T00:43:46","upload_time_iso_8601":"2021-08-19T00:43:46.411818Z","url":"https://files.pythonhosted.org/packages/27/eb/4cf8421ab79913f75665cd924b39fef67055e54d6628d62988d85aed963f/secretbox-1.5.0-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"8b7615752ba13424ec539c9e461c3bbb","sha256":"77adc511d7dc316a6108acd50497f3c918d24b4500cf411243055da997c3bcaf"},"downloads":-1,"filename":"secretbox-1.5.0.tar.gz","has_sig":false,"md5_digest":"8b7615752ba13424ec539c9e461c3bbb","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":6962,"upload_time":"2021-08-19T00:43:47","upload_time_iso_8601":"2021-08-19T00:43:47.802784Z","url":"https://files.pythonhosted.org/packages/8d/fc/a39a717c27718dbd28d3b24a44e218f1082d329a679ea24be5b2a41b7e84/secretbox-1.5.0.tar.gz","yanked":false,"yanked_reason":null}],"1.6.1":[{"comment_text":"","digests":{"md5":"5bcd0e3441e1695469453dac1223f879","sha256":"b68b4ba004fa680671e5d6288b6c9d3dd18b9ae282e954b49e10edd9a088d5e5"},"downloads":-1,"filename":"secretbox-1.6.1-py3-none-any.whl","has_sig":false,"md5_digest":"5bcd0e3441e1695469453dac1223f879","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":10513,"upload_time":"2021-10-09T01:34:04","upload_time_iso_8601":"2021-10-09T01:34:04.933998Z","url":"https://files.pythonhosted.org/packages/69/ac/6c7ff360ff1b295989d6bb88f4c848843f36e1a2e02f317001d10d0c84a8/secretbox-1.6.1-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"a58d6a2795798a5a17b4398cf8ec67c5","sha256":"3007c0e4e8d08667f3f8cef9ec98cb53bd23b72ed98149855bd5c1169b56bb42"},"downloads":-1,"filename":"secretbox-1.6.1.tar.gz","has_sig":false,"md5_digest":"a58d6a2795798a5a17b4398cf8ec67c5","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":11446,"upload_time":"2021-10-09T01:34:06","upload_time_iso_8601":"2021-10-09T01:34:06.559712Z","url":"https://files.pythonhosted.org/packages/6c/ca/f083723e0d355e0a8122be50216a5428fda05c6e1698e882933f9a3bd146/secretbox-1.6.1.tar.gz","yanked":false,"yanked_reason":null}],"2.0.0":[{"comment_text":"","digests":{"md5":"38efb1e3ca28df52a6ac73df9dad1919","sha256":"91fdd2074b463257adb541aaeb5cc757d8d7addddf353842ee104406214afe3d"},"downloads":-1,"filename":"secretbox-2.0.0-py3-none-any.whl","has_sig":false,"md5_digest":"38efb1e3ca28df52a6ac73df9dad1919","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":9856,"upload_time":"2021-10-15T20:43:43","upload_time_iso_8601":"2021-10-15T20:43:43.776230Z","url":"https://files.pythonhosted.org/packages/98/94/45e6dd99ed194642ec1a5635c14852619d3f1b4e0085f6195d497d486b1b/secretbox-2.0.0-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"069af998934d169b55321b3b4c49075e","sha256":"ca63b7bf7dd3bf0c5a652e14a2285602a3d65af2c22fd789bf05e31e85298857"},"downloads":-1,"filename":"secretbox-2.0.0.tar.gz","has_sig":false,"md5_digest":"069af998934d169b55321b3b4c49075e","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":10141,"upload_time":"2021-10-15T20:43:45","upload_time_iso_8601":"2021-10-15T20:43:45.425400Z","url":"https://files.pythonhosted.org/packages/43/6b/b79720a5eda63a874fc3727981ab5a4f5c1f7677762a575abf414065c520/secretbox-2.0.0.tar.gz","yanked":false,"yanked_reason":null}],"2.0.1":[{"comment_text":"","digests":{"md5":"2ef8c6c2b60d0e572a1dbae1c54be345","sha256":"8a1d8ae4ed77a816da0ddb6f85fa464605654f710d0ffb3a085f55c1dbc94203"},"downloads":-1,"filename":"secretbox-2.0.1-py3-none-any.whl","has_sig":false,"md5_digest":"2ef8c6c2b60d0e572a1dbae1c54be345","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":9872,"upload_time":"2021-10-17T02:57:09","upload_time_iso_8601":"2021-10-17T02:57:09.507749Z","url":"https://files.pythonhosted.org/packages/78/a2/90873bdfb84fc9a29ca9a827d1e8785f52c861d15c3b4bebb4f0f66dbd90/secretbox-2.0.1-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"e9a6d8896c50f58ec83f3d5858161a74","sha256":"5eb8cf73303c07e9237ab9fab1cb89683c0577e82cbf5bdc88814abbaa26ef68"},"downloads":-1,"filename":"secretbox-2.0.1.tar.gz","has_sig":false,"md5_digest":"e9a6d8896c50f58ec83f3d5858161a74","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":10154,"upload_time":"2021-10-17T02:57:10","upload_time_iso_8601":"2021-10-17T02:57:10.728774Z","url":"https://files.pythonhosted.org/packages/cd/20/6bdb233cdde722ef5992dcb30401ffcca3b9b890cd64aa24b46c3dbaf265/secretbox-2.0.1.tar.gz","yanked":false,"yanked_reason":null}]},"urls":[{"comment_text":"","digests":{"md5":"2ef8c6c2b60d0e572a1dbae1c54be345","sha256":"8a1d8ae4ed77a816da0ddb6f85fa464605654f710d0ffb3a085f55c1dbc94203"},"downloads":-1,"filename":"secretbox-2.0.1-py3-none-any.whl","has_sig":false,"md5_digest":"2ef8c6c2b60d0e572a1dbae1c54be345","packagetype":"bdist_wheel","python_version":"py3","requires_python":">=3.6","size":9872,"upload_time":"2021-10-17T02:57:09","upload_time_iso_8601":"2021-10-17T02:57:09.507749Z","url":"https://files.pythonhosted.org/packages/78/a2/90873bdfb84fc9a29ca9a827d1e8785f52c861d15c3b4bebb4f0f66dbd90/secretbox-2.0.1-py3-none-any.whl","yanked":false,"yanked_reason":null},{"comment_text":"","digests":{"md5":"e9a6d8896c50f58ec83f3d5858161a74","sha256":"5eb8cf73303c07e9237ab9fab1cb89683c0577e82cbf5bdc88814abbaa26ef68"},"downloads":-1,"filename":"secretbox-2.0.1.tar.gz","has_sig":false,"md5_digest":"e9a6d8896c50f58ec83f3d5858161a74","packagetype":"sdist","python_version":"source","requires_python":">=3.6","size":10154,"upload_time":"2021-10-17T02:57:10","upload_time_iso_8601":"2021-10-17T02:57:10.728774Z","url":"https://files.pythonhosted.org/packages/cd/20/6bdb233cdde722ef5992dcb30401ffcca3b9b890cd64aa24b46c3dbaf265/secretbox-2.0.1.tar.gz","yanked":false,"yanked_reason":null}],"vulnerabilities":[]}'
+      headers:
+        Accept-Ranges:
+          - bytes
+        Access-Control-Allow-Headers:
+          - Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since
+        Access-Control-Allow-Methods:
+          - GET
+        Access-Control-Allow-Origin:
+          - "*"
+        Access-Control-Expose-Headers:
+          - X-PyPI-Last-Serial
+        Access-Control-Max-Age:
+          - "86400"
+        Cache-Control:
+          - max-age=900, public
+        Connection:
+          - keep-alive
+        Content-Length:
+          - "26331"
+        Content-Security-Policy:
+          - base-uri 'self'; block-all-mixed-content; connect-src 'self' https://api.github.com/repos/
+            *.fastly-insights.com sentry.io https://api.pwnedpasswords.com https://2p66nmmycsj3.statuspage.io;
+            default-src 'none'; font-src 'self' fonts.gstatic.com; form-action 'self';
+            frame-ancestors 'none'; frame-src 'none'; img-src 'self' https://warehouse-camo.ingress.cmh1.psfhosted.org/
+            www.google-analytics.com *.fastly-insights.com; script-src 'self' www.googletagmanager.com
+            www.google-analytics.com *.fastly-insights.com https://cdn.ravenjs.com; style-src
+            'self' fonts.googleapis.com; worker-src *.fastly-insights.com
+        Content-Type:
+          - application/json
+        Date:
+          - Thu, 21 Oct 2021 02:05:43 GMT
+        ETag:
+          - '"wwsmoUuXQ1SpoFVFtt3h4Q"'
+        Referrer-Policy:
+          - origin-when-cross-origin
+        Server:
+          - nginx/1.13.9
+        Strict-Transport-Security:
+          - max-age=31536000; includeSubDomains; preload
+        Vary:
+          - Accept-Encoding, Accept-Encoding
+        X-Cache:
+          - HIT, HIT
+        X-Cache-Hits:
+          - 1, 1
+        X-Content-Type-Options:
+          - nosniff
+        X-Frame-Options:
+          - deny
+        X-Permitted-Cross-Domain-Policies:
+          - none
+        X-PyPI-Last-Serial:
+          - "11748176"
+        X-Served-By:
+          - cache-bwi5128-BWI, cache-mdw17350-MDW
+        X-Timer:
+          - S1634781944.588044,VS0,VE2
+        X-XSS-Protection:
+          - 1; mode=block
+      status:
+        code: 200
+        message: OK
+version: 1
