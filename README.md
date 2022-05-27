@@ -57,72 +57,126 @@ Release '1.2.0'
 
 ---
 
-## Local developer installation
+---
 
-It is **highly** recommended to use a `venv` for installation. Leveraging a `venv` will ensure the installed dependency files will not impact other python projects.
+# Local developer installation
+
+It is **strongly** recommended to use a virtual environment
+([`venv`](https://docs.python.org/3/library/venv.html)) when working with python
+projects. Leveraging a `venv` will ensure the installed dependency files will
+not impact other python projects or any system dependencies.
+
+The following steps outline how to install this repo for local development. See
+the [CONTRIBUTING.md](../CONTRIBUTING.md) file in the repo root for information
+on contributing to the repo.
+
+**Windows users**: Depending on your python install you will use `py` in place
+of `python` to create the `venv`.
+
+**Linux/Mac users**: Replace `python`, if needed, with the appropriate call to
+the desired version while creating the `venv`. (e.g. `python3` or `python3.8`)
+
+**All users**: Once inside an active `venv` all systems should allow the use of
+`python` for command line instructions. This will ensure you are using the
+`venv`'s python and not the system level python.
+
+---
+
+## Installation steps
 
 Clone this repo and enter root directory of repo:
+
 ```bash
-$ git clone https://github.com/preocts/pypiapi
-$ cd pypiapi
+git clone https://github.com/Preocts/pypiapi
+cd pypiapi
 ```
 
-Create and activate `venv`:
+Create the `venv`:
+
 ```bash
-# Linux/MacOS
-python3 -m venv venv
+python -m venv venv
+```
+
+Activate the `venv`:
+
+```bash
+# Linux/Mac
 . venv/bin/activate
 
 # Windows
-python -m venv venv
-venv\Scripts\activate.bat
-# or
-py -m venv venv
-venv\Scripts\activate.bat
+venv\Scripts\activate
 ```
 
-Your command prompt should now have a `(venv)` prefix on it.
+The command prompt should now have a `(venv)` prefix on it. `python` will now
+call the version of the interpreter used to create the `venv`
 
 Install editable library and development requirements:
-```bash
-# Linux/MacOS
-pip install -r requirements-dev.txt
-pip install --editable .
 
-# Windows
+```bash
+# Update pip and tools
+python -m pip install --upgrade pip wheel setuptools
+
+# Install development requirements
 python -m pip install -r requirements-dev.txt
+
+# Install editable version of library
 python -m pip install --editable .
-# or
-py -m pip install -r requirements-dev.txt
-py -m pip install --editable .
 ```
 
-Install pre-commit hooks to local repo:
+Install pre-commit [(see below for details)](#pre-commit):
+
 ```bash
 pre-commit install
-pre-commit autoupdate
 ```
 
-Run tests
+---
+
+## Misc Steps
+
+Run pre-commit on all files:
+
 ```bash
-tox
+pre-commit run --all-files
 ```
 
-To exit the `venv`:
+Run tests:
+
+```bash
+tox [-r] [-e py3x]
+```
+
+To deactivate (exit) the `venv`:
+
 ```bash
 deactivate
 ```
 
 ---
 
-### Makefile
+## [pre-commit](https://pre-commit.com)
 
-This repo has a Makefile with some quality of life scripts if your system supports `make`.
+> A framework for managing and maintaining multi-language pre-commit hooks.
 
-- `install` : Clean all artifacts, update pip, install requirements with no updates
-- `update` : Clean all artifacts, update pip, update requirements, install everything
-- `build-dist` : Build source distribution and wheel distribution
-- `clean-pyc` : Deletes python/mypy artifacts
-- `clean-tests` : Deletes tox, coverage, and pytest artifacts
-- `clean-build` : Deletes build artifacts
-- `clean-all` : Runs all clean scripts
+This repo is setup with a `.pre-commit-config.yaml` with the expectation that
+any code submitted for review already passes all selected pre-commit checks.
+`pre-commit` is installed with the development requirements and runs seemlessly
+with `git` hooks.
+
+---
+
+## Makefile
+
+This repo has a Makefile with some quality of life scripts if the system
+supports `make`.  Please note there are no checks for an active `venv` in the
+Makefile.
+
+| PHONY             | Description                                                        |
+| ----------------- | ------------------------------------------------------------------ |
+| `init`            | Update pip, setuptools, and wheel to newest version                |
+| `install`         | install the project                                                |
+| `install-dev`     | install development requirements and project                       |
+| `build-dist`      | Build source distribution and wheel distribution                   |
+| `clean-artifacts` | Deletes python/mypy artifacts including eggs, cache, and pyc files |
+| `clean-tests`     | Deletes tox, coverage, and pytest artifacts                        |
+| `clean-build`     | Deletes build artifacts                                            |
+| `clean-all`       | Runs all clean scripts                                             |
