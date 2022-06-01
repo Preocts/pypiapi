@@ -10,7 +10,7 @@ Pull project information from PyPI JSON API.
 
 ### Requirements
 - Python >= 3.8
-- urllib3 >= 1.26.7
+- httpx >= 0.23.0
 
 
 ## Example use:
